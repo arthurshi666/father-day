@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>给老爸的一封信</title>
+
+<style>
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"PingFang SC";
+background:#070b14;
+color:#fff;
+overflow:hidden;
+}
+
+/* 页面 */
+section{
+position:absolute;
+inset:0;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+padding:28px;
+opacity:0;
+transition:1s ease;
+pointer-events:none;
+}
+
+section.active{
+opacity:1;
+pointer-events:auto;
+}
+
+/* 锁屏 */
+#lock{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.93);
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+z-index:999;
+}
+
+button{
+padding:12px 22px;
+border:none;
+border-radius:10px;
+background:#fff;
+margin-top:15px;
+}
+
+/* 星光 */
+canvas{
+position:fixed;
+inset:0;
+pointer-events:none;
+}
+
+/* 约定页强化 */
+.promise{
+font-size:18px;
+font-weight:500;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="star"></canvas>
+
+<!-- 🔒 LOCK -->
+<div id="lock">
+<h3>是否答应我儿子的约定</h3>
+
+<label>
+<input type="checkbox" id="ok"> 我答应
+</label>
+
+<button onclick="unlock()">确认</button>
+
+<p style="opacity:.6">不确认无法继续</p>
+</div>
+
+<!-- 📖 1 -->
+<section class="active">
+<h2>致敬爱的老爸</h2>
+<p>父亲节快乐</p>
+</section>
+
+<!-- 📖 回忆 -->
+<section><p>我想写这封信，其实想了很久。</p></section>
+
+<section><p>我至今也想象不到您当时为了我治病北上的决心。</p></section>
+
+<section><p>如果我的人生是一座悬崖，您就是那根栏杆。</p></section>
+
+<section><p>当我刚进一中，我就被校领导认识了。</p></section>
+
+<section><p>您从不说付出，只希望我健康快乐。</p></section>
+
+<section><p>哈哈哈哈</p></section>
+
+<section><p>在我快成年的几年，您一点点带我认识社会。</p></section>
+
+<section><p>我上大学以后，您不常说想我，但会不舍。</p></section>
+
+<section><p>我也渐渐明白，父母的老去是一种交换。</p></section>
+
+<!-- ⚠️ 提醒页 -->
+<section>
+<p>老爸，别熬夜了。</p>
+</section>
+
+<!-- 🔒 约定页 -->
+<section>
+<h2>是否答应</h2>
+
+<p class="promise">我答应我儿子的约定</p>
+
+<label>
+<input type="checkbox" id="agree"> 我答应
+</label>
+
+<br>
+<button onclick="confirmPromise()">确认</button>
+
+<p style="opacity:.6">不确认无法进入下一页</p>
+</section>
+
+<!-- ✨ 约定确认页 -->
+<section>
+<h2>这是老爸对儿子的约定哦</h2>
+</section>
+
+<!-- ❤️ 终页 -->
+<section>
+<h2>爱你老爸</h2>
+<p>父亲节快乐</p>
+<p>永远爱你的儿子</p>
+</section>
+
+<script>
+
+let lock = true;
+let idx = 0;
+const secs = document.querySelectorAll("section");
+
+function show(i){
+if(i<0 || i>=secs.length) return;
+secs.forEach(s=>s.classList.remove("active"));
+secs[i].classList.add("active");
+}
+
+/* 🔓 解锁 */
+function unlock(){
+if(!document.getElementById('ok').checked){
+alert("请先确认");
+return;
+}
+document.getElementById('lock').style.display='none';
+lock = false;
+show(0);
+}
+
+/* 📌 约定确认 */
+function confirmPromise(){
+if(!document.getElementById('agree').checked){
+alert("请先确认约定");
+return;
+}
+
+idx = secs.length - 2;
+show(idx);
+
+setTimeout(()=>{
+idx = secs.length - 1;
+show(idx);
+}, 2500);
+}
+
+/* 🚫 锁滑动 */
+window.addEventListener('wheel',e=>{
+if(lock)e.preventDefault();
+},{passive:false});
+
+window.addEventListener('touchmove',e=>{
+if(lock)e.preventDefault();
+},{passive:false});
+
+/* ⏱ 自动播放 */
+setInterval(()=>{
+if(lock) return;
+
+if(idx !== secs.length - 1){
+idx++;
+show(idx);
+}
+},6000);
+
+/* 🌌 星光 */
+window.onload = function(){
+
+const c = document.getElementById('star');
+const ctx = c.getContext('2d');
+
+c.width = innerWidth;
+c.height = innerHeight;
+
+let stars = Array.from({length:60},()=>({
+x:Math.random()*c.width,
+y:Math.random()*c.height,
+r:Math.random()*1.5
+}));
+
+function draw(){
+ctx.clearRect(0,0,c.width,c.height);
+ctx.fillStyle="#fff";
+
+stars.forEach(s=>{
+ctx.beginPath();
+ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+ctx.fill();
+});
+
+requestAnimationFrame(draw);
+}
+
+draw();
+};
+
+</script>
+
+</body>
+</html>
